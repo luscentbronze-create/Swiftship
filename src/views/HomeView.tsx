@@ -179,7 +179,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
         {/* Cinematic Background Image: Highway, Semi-truck & Airplane at Sunset */}
         <div className="absolute inset-0 z-0">
           <img
-            src="/src/assets/images/home_hero_highway_truck_1789732054438.jpg"
+            src="/images/home_hero_highway_truck_1789732054438.jpg"
             alt="Cargo logistics truck on highway with freight airplane at sunset"
             className="w-full h-full object-cover object-right md:object-[75%_center] lg:object-[85%_center] filter brightness-95 contrast-105"
           />
@@ -389,7 +389,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-900">
                 <img
-                  src="/src/assets/images/air_freight_cargo_1789732257120.jpg"
+                  src="/images/air_freight_cargo_1789732257120.jpg"
                   alt="Air freight cargo airplane on runway loading containers"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -422,7 +422,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-900">
                 <img
-                  src="/src/assets/images/land_shipping_trucks_1789732269599.jpg"
+                  src="/images/land_shipping_trucks_1789732269599.jpg"
                   alt="Land shipping commercial semi freight trucks on highway"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -455,7 +455,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-900">
                 <img
-                  src="/src/assets/images/sea_ocean_freight_1789732279678.jpg"
+                  src="/images/sea_ocean_freight_1789732279678.jpg"
                   alt="Sea ocean freight container ship on deep blue waters"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />

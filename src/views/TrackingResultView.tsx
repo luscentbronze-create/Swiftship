@@ -378,7 +378,7 @@ export const TrackingResultView: React.FC<TrackingResultViewProps> = ({
           >
             <div className="relative h-44 w-full overflow-hidden">
               <img
-                src="/src/assets/images/transit_card_img_1789731655568.jpg"
+                src="/images/transit_card_img_1789731655568.jpg"
                 alt="Freight transport in transit"
                 className="w-full h-full object-cover object-center"
               />
