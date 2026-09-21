@@ -385,13 +385,13 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
             {/* Gallery Card 1: Air Shipping */}
             <div
               id="gallery-card-air"
-              className="group bg-[#151921] border border-[#1E232F] hover:border-[#FFE600]/40 rounded-3xl overflow-hidden transition-all duration-300 shadow-xl flex flex-col"
+              className="bg-[#151921] border border-[#1E232F] rounded-3xl overflow-hidden shadow-xl flex flex-col"
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-900">
                 <img
                   src="/images/air_freight_cargo_1789732257120.jpg"
                   alt="Air freight cargo airplane on runway loading containers"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#151921] via-transparent to-transparent opacity-80" />
                 <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0E1116]/85 backdrop-blur-md border border-white/10 text-xs font-bold text-white shadow-md">
@@ -401,7 +401,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
               </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-xl font-bold text-white group-hover:text-[#FFE600] transition-colors mb-2">
+                  <h3 className="text-xl font-bold text-white mb-2">
                     Air Freight Express
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
@@ -418,13 +418,13 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
             {/* Gallery Card 2: Land Shipping */}
             <div
               id="gallery-card-land"
-              className="group bg-[#151921] border border-[#1E232F] hover:border-[#FFE600]/40 rounded-3xl overflow-hidden transition-all duration-300 shadow-xl flex flex-col"
+              className="bg-[#151921] border border-[#1E232F] rounded-3xl overflow-hidden shadow-xl flex flex-col"
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-900">
                 <img
                   src="/images/land_shipping_trucks_1789732269599.jpg"
                   alt="Land shipping commercial semi freight trucks on highway"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#151921] via-transparent to-transparent opacity-80" />
                 <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0E1116]/85 backdrop-blur-md border border-white/10 text-xs font-bold text-white shadow-md">
@@ -434,7 +434,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
               </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-xl font-bold text-white group-hover:text-[#FFE600] transition-colors mb-2">
+                  <h3 className="text-xl font-bold text-white mb-2">
                     Ground &amp; Trucking
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
@@ -451,13 +451,13 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
             {/* Gallery Card 3: Sea Shipping */}
             <div
               id="gallery-card-sea"
-              className="group bg-[#151921] border border-[#1E232F] hover:border-[#FFE600]/40 rounded-3xl overflow-hidden transition-all duration-300 shadow-xl flex flex-col"
+              className="bg-[#151921] border border-[#1E232F] rounded-3xl overflow-hidden shadow-xl flex flex-col"
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-900">
                 <img
                   src="/images/sea_ocean_freight_1789732279678.jpg"
                   alt="Sea ocean freight container ship on deep blue waters"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#151921] via-transparent to-transparent opacity-80" />
                 <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0E1116]/85 backdrop-blur-md border border-white/10 text-xs font-bold text-white shadow-md">
@@ -467,7 +467,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
               </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-xl font-bold text-white group-hover:text-[#FFE600] transition-colors mb-2">
+                  <h3 className="text-xl font-bold text-white mb-2">
                     Ocean Maritime Freight
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
