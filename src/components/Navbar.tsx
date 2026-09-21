@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Globe, Menu, X } from 'lucide-react';
+import { Globe, Menu, X, PackageSearch } from 'lucide-react';
 import { PrimewayLogo } from './PrimewayLogo.tsx';
 
 interface NavbarProps {
@@ -11,7 +11,6 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('EN');
-  const [langMenuOpen, setLangMenuOpen] = useState(false);
 
   const handleNavClick = (tab: 'home' | 'track' | 'faq' | 'contact') => {
     onNavigate(tab);
@@ -82,41 +81,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate }) => {
             </button>
           </nav>
 
-          {/* Right Action: Circular Globe Icon Button */}
+          {/* Right Action: Track Button */}
           <div className="hidden md:flex items-center">
-            <div className="relative">
-              <button
-                id="language-selector-button"
-                onClick={() => setLangMenuOpen(!langMenuOpen)}
-                className="w-10 h-10 rounded-full border border-slate-700/80 hover:border-slate-500 flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#151D29] transition-all cursor-pointer"
-                title="Select Language / Region"
-                aria-label="Language and Region Settings"
-              >
-                <Globe className="w-4 h-4 stroke-[1.8]" />
-              </button>
-
-              {langMenuOpen && (
-                <div className="absolute right-0 mt-2 w-36 bg-[#151D29] border border-[#243044] rounded-xl shadow-2xl py-1.5 z-50 text-xs">
-                  {['EN (English)', 'FR (Français)', 'ES (Español)', 'DE (Deutsch)'].map((lang) => {
-                    const code = lang.slice(0, 2);
-                    return (
-                      <button
-                        key={lang}
-                        onClick={() => {
-                          setSelectedLanguage(code);
-                          setLangMenuOpen(false);
-                        }}
-                        className={`w-full text-left px-3.5 py-2 hover:bg-[#1F2A3D] transition-colors ${
-                          selectedLanguage === code ? 'text-[#FFE600] font-bold' : 'text-slate-300'
-                        }`}
-                      >
-                        {lang}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            <button
+              id="language-selector-button"
+              onClick={() => handleNavClick('track')}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#FFE600] text-slate-950 hover:bg-[#F2D900] active:scale-[0.98] transition-all cursor-pointer shadow-sm"
+              title="Track Shipment"
+              aria-label="Track Shipment"
+            >
+              <PackageSearch className="w-4 h-4 text-slate-950 stroke-[2.2]" />
+              <span>Track Shipment</span>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
