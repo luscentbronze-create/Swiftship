@@ -6,7 +6,7 @@ interface ContactViewProps {
 }
 
 export const ContactView: React.FC<ContactViewProps> = ({ onTrackNavigate }) => {
-  const contactPhone = '+1 (800) 555-0199';
+  const contactPhone = '+1 878-216-9518';
   const contactEmail = 'support@primewayexpress.com';
   const [copied, setCopied] = useState(false);
   

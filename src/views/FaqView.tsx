@@ -508,11 +508,11 @@ export const FaqView: React.FC<FaqViewProps> = ({ onTrackNavigate }) => {
               <span>Email Support</span>
             </a>
             <a
-              href="tel:+18005550199"
+              href="tel:+18782169518"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold bg-[#FFE600] text-slate-900 hover:bg-[#F2D900] transition-colors shadow-sm"
             >
               <Phone className="w-4 h-4" />
-              <span>+1 (800) 555-0199</span>
+              <span>+1 878-216-9518</span>
             </a>
           </div>
         </div>
