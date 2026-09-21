@@ -3,7 +3,7 @@ import { Mail, Phone, ExternalLink } from 'lucide-react';
 import { PrimewayLogo } from './PrimewayLogo.tsx';
 
 interface FooterProps {
-  onNavigate: (tab: 'home' | 'track' | 'faq') => void;
+  onNavigate: (tab: 'home' | 'track' | 'faq' | 'contact') => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
@@ -56,6 +56,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   className="text-slate-400 hover:text-white transition-colors cursor-pointer"
                 >
                   FAQ & Help
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onNavigate('contact')}
+                  className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  Contact Us
                 </button>
               </li>
             </ul>

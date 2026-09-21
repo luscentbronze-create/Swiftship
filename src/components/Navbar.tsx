@@ -3,8 +3,8 @@ import { Globe, Menu, X } from 'lucide-react';
 import { PrimewayLogo } from './PrimewayLogo.tsx';
 
 interface NavbarProps {
-  currentTab: 'home' | 'track' | 'faq';
-  onNavigate: (tab: 'home' | 'track' | 'faq') => void;
+  currentTab: 'home' | 'track' | 'faq' | 'contact';
+  onNavigate: (tab: 'home' | 'track' | 'faq' | 'contact') => void;
   onTrackCode?: (code: string) => void;
 }
 
@@ -13,7 +13,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate }) => {
   const [selectedLanguage, setSelectedLanguage] = useState('EN');
   const [langMenuOpen, setLangMenuOpen] = useState(false);
 
-  const handleNavClick = (tab: 'home' | 'track' | 'faq') => {
+  const handleNavClick = (tab: 'home' | 'track' | 'faq' | 'contact') => {
     onNavigate(tab);
     setMobileMenuOpen(false);
   };
@@ -68,6 +68,17 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate }) => {
               }`}
             >
               FAQ
+            </button>
+            <button
+              id="nav-link-contact"
+              onClick={() => handleNavClick('contact')}
+              className={`text-sm font-medium transition-colors cursor-pointer ${
+                currentTab === 'contact'
+                  ? 'text-white font-semibold'
+                  : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              Contact Us
             </button>
           </nav>
 
@@ -151,6 +162,15 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate }) => {
           >
             <span>FAQ</span>
             {currentTab === 'faq' && <span className="text-xs font-bold uppercase">Active</span>}
+          </button>
+          <button
+            onClick={() => handleNavClick('contact')}
+            className={`w-full text-left px-4 py-3 rounded-xl text-sm font-semibold transition-colors flex items-center justify-between ${
+              currentTab === 'contact' ? 'bg-[#FFE600] text-[#0E1116]' : 'text-slate-200 hover:bg-[#1A2332]'
+            }`}
+          >
+            <span>Contact Us</span>
+            {currentTab === 'contact' && <span className="text-xs font-bold uppercase">Active</span>}
           </button>
 
           <div className="pt-2 border-t border-[#1E293B] flex items-center justify-between px-2 text-xs text-slate-400">

@@ -7,11 +7,12 @@ import { TrackView } from './views/TrackView.tsx';
 import { TrackingResultView } from './views/TrackingResultView.tsx';
 import { NotFoundView } from './views/NotFoundView.tsx';
 import { FaqView } from './views/FaqView.tsx';
+import { ContactView } from './views/ContactView.tsx';
 import { CustomerShipmentView } from './types.ts';
 import { lookupShipment } from './services/trackingService.ts';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
-type ViewMode = 'home' | 'track' | 'faq';
+type ViewMode = 'home' | 'track' | 'faq' | 'contact';
 type SearchState = 'idle' | 'loading' | 'found' | 'not_found' | 'error';
 
 export default function App() {
@@ -107,8 +108,10 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col pb-16 md:pb-0">
-        {/* If user selected FAQ tab */}
-        {currentTab === 'faq' ? (
+        {/* Navigation Tab Views */}
+        {currentTab === 'contact' ? (
+          <ContactView onTrackNavigate={() => handleNavigate('track')} />
+        ) : currentTab === 'faq' ? (
           <FaqView onTrackNavigate={() => handleNavigate('track')} />
         ) : searchState === 'found' && shipmentData ? (
           <TrackingResultView
