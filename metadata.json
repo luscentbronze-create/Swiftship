@@ -1,0 +1,6 @@
+{
+  "name": "SwiftShip - Professional Shipment Tracking",
+  "description": "Customer-facing shipment tracking portal. Enter your 11-character alphanumeric tracking code to track shipments with real-time status, timeline, and transit history.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
