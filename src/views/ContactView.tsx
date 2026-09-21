@@ -7,7 +7,7 @@ interface ContactViewProps {
 
 export const ContactView: React.FC<ContactViewProps> = ({ onTrackNavigate }) => {
   const contactPhone = '+1 (878) 216-9518';
-  const contactEmail = 'support@tracecargo.com';
+  const contactEmail = 'support@primewayexpress.com';
   const [copied, setCopied] = useState(false);
   
   // Quick message builder that redirects directly to email / Gmail
@@ -24,12 +24,12 @@ export const ContactView: React.FC<ContactViewProps> = ({ onTrackNavigate }) => 
   const getEmailSubject = () => {
     if (subject.trim()) {
       return trackingCode.trim()
-        ? `[TraceCargo - ${trackingCode.trim()}] ${subject.trim()}`
-        : `[TraceCargo] ${subject.trim()}`;
+        ? `[Primeway Express - ${trackingCode.trim()}] ${subject.trim()}`
+        : `[Primeway Express] ${subject.trim()}`;
     }
     return trackingCode.trim()
-      ? `[TraceCargo] Inquiry for Shipment ${trackingCode.trim()}`
-      : 'Inquiry - TraceCargo Shipment';
+      ? `[Primeway Express] Inquiry for Shipment ${trackingCode.trim()}`
+      : 'Inquiry - Primeway Express Shipment';
   };
 
   const getEmailBody = () => {
