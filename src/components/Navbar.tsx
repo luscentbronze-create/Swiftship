@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Globe, Menu, X, PackageSearch } from 'lucide-react';
-import { PrimewayLogo } from './PrimewayLogo.tsx';
+import { TraceCargoLogo } from './TraceCargoLogo.tsx';
 
 interface NavbarProps {
   currentTab: 'home' | 'track' | 'faq' | 'contact';
@@ -27,9 +27,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate }) => {
             onClick={() => handleNavClick('home')}
             className="flex items-center gap-2.5 group cursor-pointer focus:outline-none"
           >
-            <PrimewayLogo className="w-8 h-8 shrink-0 transition-transform group-hover:scale-105" />
+            <TraceCargoLogo className="w-8 h-8 shrink-0 transition-transform group-hover:scale-105" />
             <span className="text-lg sm:text-xl font-bold tracking-tight text-white whitespace-nowrap">
-              Primeway Express
+              TraceCargo
             </span>
           </button>
 

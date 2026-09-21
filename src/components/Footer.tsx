@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mail, Phone, ExternalLink } from 'lucide-react';
-import { PrimewayLogo } from './PrimewayLogo.tsx';
+import { TraceCargoLogo } from './TraceCargoLogo.tsx';
 
 interface FooterProps {
   onNavigate: (tab: 'home' | 'track' | 'faq' | 'contact') => void;
@@ -8,7 +8,7 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const contactPhone = '+1 (878) 216-9518';
-  const contactEmail = 'support@primewayexpress.com';
+  const contactEmail = 'support@tracecargo.com';
   const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(contactEmail)}`;
 
   return (
@@ -18,9 +18,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Brand & Slogan */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <PrimewayLogo className="w-7 h-7" />
+              <TraceCargoLogo className="w-7 h-7" />
               <span className="text-xl font-bold tracking-tight text-white">
-                Primeway Express
+                TraceCargo
               </span>
             </div>
             <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
@@ -144,7 +144,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
         {/* Bottom bar */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
-          <p>© 2026 Primeway Express. All rights reserved.</p>
+          <p>© 2026 TraceCargo. All rights reserved.</p>
           <p className="text-slate-500 text-[11px]">Reliable Global Freight & Logistics</p>
         </div>
       </div>
