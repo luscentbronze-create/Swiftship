@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mail, Phone, ExternalLink } from 'lucide-react';
-import { SwiftShipLogo } from './SwiftShipLogo.tsx';
+import { PrimewayLogo } from './PrimewayLogo.tsx';
 
 interface FooterProps {
   onNavigate: (tab: 'home' | 'track' | 'faq') => void;
@@ -8,7 +8,7 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const contactPhone = '+1 (800) 555-0199';
-  const contactEmail = 'support@swiftship.com';
+  const contactEmail = 'support@primewayexpress.com';
   const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(contactEmail)}`;
 
   return (
@@ -18,9 +18,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Brand & Slogan */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <SwiftShipLogo className="w-7 h-7" />
+              <PrimewayLogo className="w-7 h-7" />
               <span className="text-xl font-bold tracking-tight text-white">
-                SwiftShip
+                Primeway Express
               </span>
             </div>
             <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
@@ -135,8 +135,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-6 flex items-center justify-between text-xs text-slate-400">
-          <p>© 2026 SwiftShip. All rights reserved.</p>
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+          <p>© 2026 Primeway Express. All rights reserved.</p>
+          <p className="text-slate-500 text-[11px]">Reliable Global Freight & Logistics</p>
         </div>
       </div>
     </footer>

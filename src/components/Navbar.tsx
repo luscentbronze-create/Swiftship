@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Globe, Menu, X } from 'lucide-react';
-import { SwiftShipLogo } from './SwiftShipLogo.tsx';
+import { PrimewayLogo } from './PrimewayLogo.tsx';
 
 interface NavbarProps {
   currentTab: 'home' | 'track' | 'faq';
@@ -22,15 +22,15 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate }) => {
     <header className="sticky top-0 z-50 bg-[#0B1118]/95 backdrop-blur-md border-b border-[#1A2230]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Brand Logo matching image.png */}
+          {/* Brand Logo & Name */}
           <button
             id="nav-logo-button"
             onClick={() => handleNavClick('home')}
             className="flex items-center gap-2.5 group cursor-pointer focus:outline-none"
           >
-            <SwiftShipLogo className="w-8 h-8 transition-transform group-hover:scale-105" />
-            <span className="text-xl font-bold tracking-tight text-white">
-              SwiftShip
+            <PrimewayLogo className="w-8 h-8 shrink-0 transition-transform group-hover:scale-105" />
+            <span className="text-lg sm:text-xl font-bold tracking-tight text-white whitespace-nowrap">
+              Primeway Express
             </span>
           </button>
 
@@ -152,6 +152,28 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate }) => {
             <span>FAQ</span>
             {currentTab === 'faq' && <span className="text-xs font-bold uppercase">Active</span>}
           </button>
+
+          <div className="pt-2 border-t border-[#1E293B] flex items-center justify-between px-2 text-xs text-slate-400">
+            <span className="flex items-center gap-1.5 font-medium">
+              <Globe className="w-3.5 h-3.5 text-[#FFE600]" />
+              Language:
+            </span>
+            <div className="flex gap-1.5">
+              {['EN', 'FR', 'ES', 'DE'].map((code) => (
+                <button
+                  key={code}
+                  onClick={() => setSelectedLanguage(code)}
+                  className={`px-2 py-1 rounded text-xs font-bold transition-colors ${
+                    selectedLanguage === code
+                      ? 'bg-[#FFE600] text-black'
+                      : 'bg-[#1A2332] text-slate-300 hover:text-white'
+                  }`}
+                >
+                  {code}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </header>

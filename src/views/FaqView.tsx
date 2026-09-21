@@ -65,7 +65,7 @@ export const FaqView: React.FC<FaqViewProps> = ({ onTrackNavigate }) => {
       content: (
         <div className="space-y-3 text-slate-600 text-sm leading-relaxed">
           <p>
-            Every SwiftShip shipment is assigned a unique <strong className="text-slate-900">11-character alphanumeric code</strong> (for example, <code className="px-2 py-0.5 rounded bg-slate-100 font-mono text-slate-900 font-bold text-xs border border-slate-200">TRK7A92X4B1</code> or <code className="px-2 py-0.5 rounded bg-slate-100 font-mono text-slate-900 font-bold text-xs border border-slate-200">8F2K91M7Q4Z</code>).
+            Every Primeway Express shipment is assigned a unique <strong className="text-slate-900">11-character alphanumeric code</strong> (for example, <code className="px-2 py-0.5 rounded bg-slate-100 font-mono text-slate-900 font-bold text-xs border border-slate-200">TRK7A92X4B1</code> or <code className="px-2 py-0.5 rounded bg-slate-100 font-mono text-slate-900 font-bold text-xs border border-slate-200">8F2K91M7Q4Z</code>).
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
@@ -104,7 +104,7 @@ export const FaqView: React.FC<FaqViewProps> = ({ onTrackNavigate }) => {
       content: (
         <div className="space-y-3.5 text-sm text-slate-600">
           <p className="leading-relaxed">
-            SwiftShip tracks packages across 5 standardized milestone stages:
+            Primeway Express tracks packages across 5 standardized milestone stages:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-3">
@@ -260,7 +260,7 @@ export const FaqView: React.FC<FaqViewProps> = ({ onTrackNavigate }) => {
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-slate-600">
             <li>Note the damage with the courier driver prior to signing if possible.</li>
             <li>Take clear, well-lit photos of the shipping label, carton exterior, and damaged goods.</li>
-            <li>Contact SwiftShip claims support within 7 business days for rapid claim resolution.</li>
+            <li>Contact Primeway Express claims support within 7 business days for rapid claim resolution.</li>
           </ul>
         </div>
       ),
@@ -501,18 +501,18 @@ export const FaqView: React.FC<FaqViewProps> = ({ onTrackNavigate }) => {
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
             <a
-              href="mailto:support@swiftship.com"
+              href="mailto:support@primewayexpress.com"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold bg-white text-slate-800 border border-slate-200 hover:bg-slate-100 transition-colors shadow-xs"
             >
               <Mail className="w-4 h-4 text-slate-600" />
               <span>Email Support</span>
             </a>
             <a
-              href="tel:+15551234567"
+              href="tel:+18005550199"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold bg-[#FFE600] text-slate-900 hover:bg-[#F2D900] transition-colors shadow-sm"
             >
               <Phone className="w-4 h-4" />
-              <span>+1 (555) 123-4567</span>
+              <span>+1 (800) 555-0199</span>
             </a>
           </div>
         </div>

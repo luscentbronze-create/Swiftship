@@ -67,7 +67,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
       content: (
         <div className="space-y-3 text-slate-600 text-sm leading-relaxed">
           <p>
-            Tracking your package with SwiftShip is fast and direct. Follow these quick steps:
+            Tracking your package with Primeway Express is fast and direct. Follow these quick steps:
           </p>
           <ol className="list-decimal pl-5 space-y-2 text-slate-600 text-xs sm:text-sm">
             <li>
@@ -157,7 +157,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
       shortAnswer: 'Administrative privacy controls protect sensitive client information.',
       content: (
         <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-          To comply with commercial privacy and data protection standards, SwiftShip system administrators can designate specific fields—such as direct contact numbers, residential street addresses, or cargo valuations—as private. Even with protected contact details, your public milestone timeline and location scans remain 100% visible and accurate.
+          To comply with commercial privacy and data protection standards, Primeway Express system administrators can designate specific fields—such as direct contact numbers, residential street addresses, or cargo valuations—as private. Even with protected contact details, your public milestone timeline and location scans remain 100% visible and accurate.
         </p>
       ),
     },
@@ -376,7 +376,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onTrack, isLoading }) => {
               Multimodal Transport Solutions
             </h2>
             <p className="text-slate-400 text-sm sm:text-base mt-3.5 leading-relaxed">
-              Whether by air, land, or sea, SwiftShip synchronizes every parcel movement with continuous location checkpoints and reliable dispatch monitoring.
+              Whether by air, land, or sea, Primeway Express synchronizes every parcel movement with continuous location checkpoints and reliable dispatch monitoring.
             </p>
           </div>
 
