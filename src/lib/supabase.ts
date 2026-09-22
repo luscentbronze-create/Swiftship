@@ -1,18 +1,19 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const rawUrl = (import.meta.env.VITE_SUPABASE_URL || '').replace(/["']/g, '').trim();
+const rawKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').replace(/["']/g, '').trim();
 
 /**
  * Determines whether Supabase environment variables have been configured.
  */
 export const isSupabaseConfigured = (): boolean => {
   return (
-    typeof supabaseUrl === 'string' &&
-    supabaseUrl.trim().length > 0 &&
-    typeof supabaseAnonKey === 'string' &&
-    supabaseAnonKey.trim().length > 0 &&
-    !supabaseUrl.includes('placeholder')
+    typeof rawUrl === 'string' &&
+    rawUrl.length > 0 &&
+    typeof rawKey === 'string' &&
+    rawKey.length > 0 &&
+    rawUrl.startsWith('https://') &&
+    !rawUrl.includes('placeholder')
   );
 };
 
@@ -23,10 +24,11 @@ let clientInstance: SupabaseClient | null = null;
  */
 export const getSupabaseClient = (): SupabaseClient | null => {
   if (!isSupabaseConfigured()) {
+    console.warn('[Supabase] Not configured. VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is missing or invalid.');
     return null;
   }
   if (!clientInstance) {
-    clientInstance = createClient(supabaseUrl.trim(), supabaseAnonKey.trim(), {
+    clientInstance = createClient(rawUrl, rawKey, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
