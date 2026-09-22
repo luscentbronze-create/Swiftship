@@ -1,7 +1,14 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const rawUrl = (import.meta.env.VITE_SUPABASE_URL || '').replace(/["']/g, '').trim();
-const rawKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').replace(/["']/g, '').trim();
+const DEFAULT_SUPABASE_URL = 'https://xyplbgcjybymntwqkebm.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5cGxiZ2NqeWJ5bW50d3FrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3NTgwNjgsImV4cCI6MjEwNTMzNDA2OH0.ofcuh-1u5nzb91nmAHl2F0btPW8sNmdd1aKnq_XdtJY';
+
+const envUrl = (import.meta.env.VITE_SUPABASE_URL || '').replace(/["']/g, '').trim();
+const envKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').replace(/["']/g, '').trim();
+
+const rawUrl = envUrl || DEFAULT_SUPABASE_URL;
+const rawKey = envKey || DEFAULT_SUPABASE_ANON_KEY;
 
 /**
  * Determines whether Supabase environment variables have been configured.

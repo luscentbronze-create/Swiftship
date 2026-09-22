@@ -21,6 +21,7 @@ export default function App() {
   const [shipmentData, setShipmentData] = useState<CustomerShipmentView | null>(null);
   const [searchedCode, setSearchedCode] = useState<string>('');
   const [systemErrorMessage, setSystemErrorMessage] = useState<string | null>(null);
+  const [notFoundDetails, setNotFoundDetails] = useState<string | null>(null);
 
   // Check URL query param on initial load (e.g. ?code=TRK7A92X4B1)
   useEffect(() => {
@@ -36,6 +37,7 @@ export default function App() {
     setSearchedCode(trimmed);
     setSearchState('loading');
     setSystemErrorMessage(null);
+    setNotFoundDetails(null);
 
     // Update URL quietly without full reload
     try {
@@ -54,6 +56,7 @@ export default function App() {
         setSearchState('found');
       } else if (result.error === 'NOT_FOUND') {
         setShipmentData(null);
+        setNotFoundDetails(result.details || null);
         setSearchState('not_found');
       } else {
         setShipmentData(null);
@@ -122,6 +125,7 @@ export default function App() {
         ) : searchState === 'not_found' ? (
           <NotFoundView
             attemptedCode={searchedCode}
+            details={notFoundDetails}
             onTrack={handleTrack}
             onBackToHome={handleBackToHome}
             isLoading={false}

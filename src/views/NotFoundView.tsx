@@ -4,6 +4,7 @@ import { TrackingCodeInput } from '../components/TrackingCodeInput.tsx';
 
 interface NotFoundViewProps {
   attemptedCode: string;
+  details?: string | null;
   onTrack: (code: string) => void;
   onBackToHome: () => void;
   isLoading?: boolean;
@@ -11,6 +12,7 @@ interface NotFoundViewProps {
 
 export const NotFoundView: React.FC<NotFoundViewProps> = ({
   attemptedCode,
+  details,
   onTrack,
   onBackToHome,
   isLoading,
@@ -46,7 +48,7 @@ export const NotFoundView: React.FC<NotFoundViewProps> = ({
               id="not-found-description"
               className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed"
             >
-              We couldn't find a shipment associated with this tracking code. Please check the code and try again.
+              {details || "We couldn't find a shipment associated with this tracking code. Please check the code and try again."}
             </p>
             {attemptedCode && (
               <div className="inline-block mt-2 px-3 py-1 rounded-lg bg-red-500/10 border border-red-500/25 text-red-400 font-mono text-xs">
