@@ -47,7 +47,7 @@ async function startServer() {
 
   // Exact database lookup endpoint
   // Customers can only perform exact lookups: no listing, no browsing, no admin access
-  app.get('/api/track/:code', (req, res) => {
+  app.get('/api/track/:code', async (req, res) => {
     const rawCode = req.params.code;
     const trimmed = (rawCode || '').trim();
 
@@ -74,7 +74,129 @@ async function startServer() {
 
     const normalizedCode = trimmed.toUpperCase();
 
-    // Exact database lookup ONLY
+    // Check Supabase if configured on the server
+    const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+    const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+
+    if (supabaseUrl && supabaseKey) {
+      try {
+        const { createClient } = await import('@supabase/supabase-js');
+        const client = createClient(supabaseUrl, supabaseKey);
+
+        const { data: baseShipment, error: baseErr } = await client
+          .from('shipments')
+          .select('*')
+          .ilike('tracking_code', normalizedCode)
+          .maybeSingle();
+
+        if (baseShipment && !baseErr) {
+          let details: any = null;
+          let sender: any = null;
+          let receiver: any = null;
+          let vis: any = null;
+          let events: any[] = [];
+
+          try {
+            const res = await client.from('shipment_details').select('*').eq('shipment_id', baseShipment.id).maybeSingle();
+            details = res.data;
+          } catch (_e) { /* fallback */ }
+
+          try {
+            const res = await client.from('shipment_senders').select('*').eq('shipment_id', baseShipment.id).maybeSingle();
+            sender = res.data;
+          } catch (_e) { /* fallback */ }
+
+          try {
+            const res = await client.from('shipment_receivers').select('*').eq('shipment_id', baseShipment.id).maybeSingle();
+            receiver = res.data;
+          } catch (_e) { /* fallback */ }
+
+          try {
+            const res = await client.from('shipment_visibilities').select('*').eq('shipment_id', baseShipment.id).maybeSingle();
+            vis = res.data;
+          } catch (_e) { /* fallback */ }
+
+          try {
+            const res = await client.from('tracking_events').select('*').eq('shipment_id', baseShipment.id).order('event_order', { ascending: false });
+            if (res.data) events = res.data;
+          } catch (_e) { /* fallback */ }
+
+          const fullRecord = {
+            trackingCode: baseShipment.tracking_code,
+            status: baseShipment.status || 'Shipment Created',
+            createdAt: baseShipment.created_at || new Date().toISOString(),
+            details: {
+              product: details?.product || baseShipment.product || 'Standard Parcel',
+              quantity: details?.quantity || baseShipment.quantity || 1,
+              transportationMethod: details?.transportation_method || baseShipment.transportation_method || 'Express',
+              departureDate: details?.departure_date || baseShipment.departure_date || '',
+              estimatedDelivery: details?.estimated_delivery || baseShipment.estimated_delivery || '',
+              carrier: details?.carrier || baseShipment.carrier || 'Primeway Express',
+              weight: details?.weight || baseShipment.weight || '1.0 kg',
+              origin: details?.origin || baseShipment.origin || '',
+              destination: details?.destination || baseShipment.destination || '',
+            },
+            sender: {
+              name: sender?.name || baseShipment.sender_name || 'Shipper',
+              address: sender?.address || baseShipment.sender_address || '',
+              email: sender?.email || baseShipment.sender_email || '',
+              phone: sender?.phone || baseShipment.sender_phone || '',
+            },
+            receiver: {
+              name: receiver?.name || baseShipment.receiver_name || 'Consignee',
+              address: receiver?.address || baseShipment.receiver_address || '',
+              email: receiver?.email || baseShipment.receiver_email || '',
+              phone: receiver?.phone || baseShipment.receiver_phone || '',
+            },
+            visibility: {
+              showProduct: vis?.show_product ?? true,
+              showQuantity: vis?.show_quantity ?? true,
+              showTransportation: vis?.show_transportation ?? true,
+              showDepartureDate: vis?.show_departure_date ?? true,
+              showEstimatedDelivery: vis?.show_estimated_delivery ?? true,
+              showCarrier: vis?.show_carrier ?? true,
+              showWeight: vis?.show_weight ?? true,
+              showOrigin: vis?.show_origin ?? true,
+              showDestination: vis?.show_destination ?? true,
+              showSenderName: vis?.show_sender_name ?? true,
+              showSenderAddress: vis?.show_sender_address ?? false,
+              showSenderEmail: vis?.show_sender_email ?? false,
+              showSenderPhone: vis?.show_sender_phone ?? false,
+              showReceiverName: vis?.show_receiver_name ?? true,
+              showReceiverAddress: vis?.show_receiver_address ?? false,
+              showReceiverEmail: vis?.show_receiver_email ?? false,
+              showReceiverPhone: vis?.show_receiver_phone ?? false,
+            },
+            history: (events && events.length > 0)
+              ? events.map((ev: any) => ({
+                  date: ev.date,
+                  time: ev.time,
+                  status: ev.status,
+                  location: ev.location,
+                  description: ev.description,
+                }))
+              : [
+                  {
+                    date: details?.departure_date || 'Recent',
+                    time: '08:00',
+                    status: baseShipment.status || 'Shipment Created',
+                    location: details?.origin || 'Origin Facility',
+                    description: 'Shipment recorded in logistics database.',
+                  },
+                ],
+          };
+
+          return res.json({
+            success: true,
+            data: filterForCustomer(fullRecord as any),
+          });
+        }
+      } catch (err) {
+        console.warn('[Server] Supabase tracking lookup failed:', err);
+      }
+    }
+
+    // Exact database lookup fallback
     const matchedRecord = ADMIN_SHIPMENT_DATABASE.find(
       (r) => r.trackingCode.toUpperCase() === normalizedCode
     );

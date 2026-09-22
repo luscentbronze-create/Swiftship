@@ -114,7 +114,8 @@ export async function lookupShipmentFromSupabase(
     }
 
     // 2. Second attempt: Direct table queries via join/relations
-    const { data: shipment, error: shipmentError } = await client
+    let shipment: any = null;
+    const { data: joinedShipment, error: shipmentError } = await client
       .from('shipments')
       .select(`
         id,
@@ -127,12 +128,82 @@ export async function lookupShipmentFromSupabase(
         shipment_visibilities (*),
         tracking_events (*)
       `)
-      .eq('tracking_code', normalizedCode)
+      .ilike('tracking_code', normalizedCode)
       .maybeSingle();
 
-    if (shipmentError) {
-      console.warn('[Supabase] Error querying shipment:', shipmentError);
-      return null;
+    if (!shipmentError && joinedShipment) {
+      shipment = joinedShipment;
+    } else {
+      if (shipmentError) {
+        console.warn('[Supabase] Joined query failed, attempting standalone table lookup:', shipmentError.message);
+      }
+
+      // 3. Third attempt: Resilient standalone queries (in case foreign key relationships aren't cached or sub-tables are flat)
+      const { data: baseShipment, error: baseError } = await client
+        .from('shipments')
+        .select('*')
+        .ilike('tracking_code', normalizedCode)
+        .maybeSingle();
+
+      if (baseError) {
+        console.error('[Supabase] Error querying base shipments table:', baseError);
+        return {
+          success: false,
+          error: 'DATABASE_ERROR',
+          message: 'Database Query Error',
+          details: `Supabase query failed: ${baseError.message} (${baseError.code || 'RLS or schema issue'}). Please check table permissions and schema.`,
+        };
+      }
+
+      if (!baseShipment) {
+        return {
+          success: false,
+          error: 'NOT_FOUND',
+          message: 'Tracking Code Not Found',
+          details: `Tracking code "${normalizedCode}" was not found in your Supabase database.`,
+        };
+      }
+
+      // Fetch related records independently so failure in one table doesn't break tracking
+      let detailsRes: any = null;
+      let senderRes: any = null;
+      let receiverRes: any = null;
+      let visRes: any = null;
+      let eventsRes: any[] = [];
+
+      try {
+        const { data } = await client.from('shipment_details').select('*').eq('shipment_id', baseShipment.id).maybeSingle();
+        detailsRes = data;
+      } catch (_e) { /* ignore if table missing */ }
+
+      try {
+        const { data } = await client.from('shipment_senders').select('*').eq('shipment_id', baseShipment.id).maybeSingle();
+        senderRes = data;
+      } catch (_e) { /* ignore if table missing */ }
+
+      try {
+        const { data } = await client.from('shipment_receivers').select('*').eq('shipment_id', baseShipment.id).maybeSingle();
+        receiverRes = data;
+      } catch (_e) { /* ignore if table missing */ }
+
+      try {
+        const { data } = await client.from('shipment_visibilities').select('*').eq('shipment_id', baseShipment.id).maybeSingle();
+        visRes = data;
+      } catch (_e) { /* ignore if table missing */ }
+
+      try {
+        const { data } = await client.from('tracking_events').select('*').eq('shipment_id', baseShipment.id).order('event_order', { ascending: false });
+        if (data) eventsRes = data;
+      } catch (_e) { /* ignore if table missing */ }
+
+      shipment = {
+        ...baseShipment,
+        shipment_details: detailsRes || {},
+        shipment_senders: senderRes || {},
+        shipment_receivers: receiverRes || {},
+        shipment_visibilities: visRes || {},
+        tracking_events: eventsRes,
+      };
     }
 
     if (!shipment) {
@@ -166,33 +237,33 @@ export async function lookupShipmentFromSupabase(
         (b.event_order ?? 0) - (a.event_order ?? 0)
     );
 
-    // Map to standard ShipmentRecord to run through filterForCustomer
+    // Map to standard ShipmentRecord, falling back to flat columns on base shipment if present
     const fullRecord: ShipmentRecord = {
       trackingCode: shipment.tracking_code,
-      status: shipment.status,
-      createdAt: shipment.created_at,
+      status: shipment.status || 'Shipment Created',
+      createdAt: shipment.created_at || new Date().toISOString(),
       details: {
-        product: details.product || '',
-        quantity: details.quantity || 1,
-        transportationMethod: details.transportation_method || 'Air',
-        departureDate: details.departure_date || '',
-        estimatedDelivery: details.estimated_delivery || '',
-        carrier: details.carrier || '',
-        weight: details.weight || '',
-        origin: details.origin || '',
-        destination: details.destination || '',
+        product: details.product || shipment.product || 'Standard Parcel',
+        quantity: details.quantity || shipment.quantity || 1,
+        transportationMethod: details.transportation_method || shipment.transportation_method || 'Express',
+        departureDate: details.departure_date || shipment.departure_date || '',
+        estimatedDelivery: details.estimated_delivery || shipment.estimated_delivery || '',
+        carrier: details.carrier || shipment.carrier || 'Primeway Express',
+        weight: details.weight || shipment.weight || '1.0 kg',
+        origin: details.origin || shipment.origin || '',
+        destination: details.destination || shipment.destination || '',
       },
       sender: {
-        name: sender.name || '',
-        address: sender.address || '',
-        email: sender.email || '',
-        phone: sender.phone || '',
+        name: sender.name || shipment.sender_name || 'Shipper',
+        address: sender.address || shipment.sender_address || '',
+        email: sender.email || shipment.sender_email || '',
+        phone: sender.phone || shipment.sender_phone || '',
       },
       receiver: {
-        name: receiver.name || '',
-        address: receiver.address || '',
-        email: receiver.email || '',
-        phone: receiver.phone || '',
+        name: receiver.name || shipment.receiver_name || 'Consignee',
+        address: receiver.address || shipment.receiver_address || '',
+        email: receiver.email || shipment.receiver_email || '',
+        phone: receiver.phone || shipment.receiver_phone || '',
       },
       visibility: {
         showProduct: vis.show_product ?? true,
@@ -202,8 +273,8 @@ export async function lookupShipmentFromSupabase(
         showEstimatedDelivery: vis.show_estimated_delivery ?? true,
         showCarrier: vis.show_carrier ?? true,
         showWeight: vis.show_weight ?? true,
-        showOrigin: vis.show_origin ?? false,
-        showDestination: vis.show_destination ?? false,
+        showOrigin: vis.show_origin ?? true,
+        showDestination: vis.show_destination ?? true,
         showSenderName: vis.show_sender_name ?? true,
         showSenderAddress: vis.show_sender_address ?? false,
         showSenderEmail: vis.show_sender_email ?? false,
@@ -213,21 +284,36 @@ export async function lookupShipmentFromSupabase(
         showReceiverEmail: vis.show_receiver_email ?? false,
         showReceiverPhone: vis.show_receiver_phone ?? false,
       },
-      history: events.map((ev: { date: string; time?: string; status: ShipmentStatus; location: string; description: string }) => ({
-        date: ev.date,
-        time: ev.time,
-        status: ev.status,
-        location: ev.location,
-        description: ev.description,
-      })),
+      history: events.length > 0
+        ? events.map((ev: { date: string; time?: string; status: ShipmentStatus; location: string; description: string }) => ({
+            date: ev.date,
+            time: ev.time,
+            status: ev.status,
+            location: ev.location,
+            description: ev.description,
+          }))
+        : [
+            {
+              date: details.departure_date || 'Recent',
+              time: '08:00',
+              status: shipment.status || 'Shipment Created',
+              location: details.origin || 'Origin Facility',
+              description: 'Shipment recorded in logistics database.',
+            },
+          ],
     };
 
     return {
       success: true,
       data: filterForCustomer(fullRecord),
     };
-  } catch (err) {
+  } catch (err: any) {
     console.error('[Supabase] Exception during lookup:', err);
-    return null;
+    return {
+      success: false,
+      error: 'DATABASE_ERROR',
+      message: 'Database Lookup Error',
+      details: err?.message ? `Database lookup error: ${err.message}` : 'Failed to query database.',
+    };
   }
 }

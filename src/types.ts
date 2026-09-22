@@ -101,7 +101,7 @@ export type LookupResponse =
     }
   | {
       success: false;
-      error: 'NOT_FOUND' | 'INVALID_FORMAT' | 'SERVER_ERROR';
+      error: 'NOT_FOUND' | 'INVALID_FORMAT' | 'SERVER_ERROR' | 'DATABASE_ERROR';
       message: string;
       details?: string;
     };

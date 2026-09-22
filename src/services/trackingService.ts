@@ -91,7 +91,8 @@ export async function lookupShipment(rawCode: string): Promise<LookupResponse> {
 
   try {
     const response = await fetch(`/api/track/${encodeURIComponent(code)}`);
-    if (response.ok) {
+    const contentType = response.headers.get('content-type') || '';
+    if (response.ok && contentType.includes('application/json')) {
       const data = await response.json();
       return {
         success: true,
@@ -104,35 +105,45 @@ export async function lookupShipment(rawCode: string): Promise<LookupResponse> {
         success: false,
         error: 'NOT_FOUND',
         message: 'Tracking Code Not Found',
-        details: "We couldn't find a shipment associated with this tracking code. Please check the code and try again.",
+        details: isSupabaseConfigured()
+          ? "We couldn't find a shipment associated with this tracking code in the database. Please check the code and try again."
+          : "We couldn't find this tracking code. If this shipment was created in Supabase, make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are configured.",
       };
     }
 
-    // Other HTTP error
-    return {
-      success: false,
-      error: 'SERVER_ERROR',
-      message: 'System Error',
-      details: 'Something went wrong while retrieving your shipment. Please try again later.',
-    };
+    if (!response.ok && contentType.includes('application/json')) {
+      const errData = await response.json().catch(() => null);
+      if (errData?.details || errData?.message) {
+        return {
+          success: false,
+          error: errData.error || 'SERVER_ERROR',
+          message: errData.message || 'System Error',
+          details: errData.details,
+        };
+      }
+    }
   } catch (_err) {
-    // Network or client-only fallback: perform exact lookup against the admin database
-    const exactRecord = ADMIN_SHIPMENT_DATABASE.find(
-      (r) => r.trackingCode.toUpperCase() === code
-    );
+    // Continue to client fallback
+  }
 
-    if (exactRecord) {
-      return {
-        success: true,
-        data: filterForCustomer(exactRecord),
-      };
-    }
+  // Fallback: perform exact lookup against the local demo database
+  const exactRecord = ADMIN_SHIPMENT_DATABASE.find(
+    (r) => r.trackingCode.toUpperCase() === code
+  );
 
+  if (exactRecord) {
     return {
-      success: false,
-      error: 'NOT_FOUND',
-      message: 'Tracking Code Not Found',
-      details: "We couldn't find a shipment associated with this tracking code. Please check the code and try again.",
+      success: true,
+      data: filterForCustomer(exactRecord),
     };
   }
+
+  return {
+    success: false,
+    error: 'NOT_FOUND',
+    message: 'Tracking Code Not Found',
+    details: isSupabaseConfigured()
+      ? "We couldn't find a shipment associated with this tracking code. Please verify the code and try again."
+      : "Tracking code not found in the demo dataset. If you created this shipment in Supabase, please ensure your Supabase database credentials (VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY) are configured in your environment.",
+  };
 }
