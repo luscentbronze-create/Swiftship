@@ -7,7 +7,7 @@ interface ContactViewProps {
 
 export const ContactView: React.FC<ContactViewProps> = ({ onTrackNavigate }) => {
   const contactPhone = '+1 (878) 216-9518';
-  const contactEmail = 'support@primewayexpress.com';
+  const contactEmail = 'support@primewayexpress.org';
   const [copied, setCopied] = useState(false);
   
   // Quick message builder that redirects directly to email / Gmail

@@ -501,7 +501,7 @@ export const FaqView: React.FC<FaqViewProps> = ({ onTrackNavigate }) => {
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
             <a
-              href="mailto:support@primewayexpress.com"
+              href="mailto:support@primewayexpress.org"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold bg-white text-slate-800 border border-slate-200 hover:bg-slate-100 transition-colors shadow-xs"
             >
               <Mail className="w-4 h-4 text-slate-600" />

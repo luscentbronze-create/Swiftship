@@ -25,6 +25,9 @@ export interface ShipmentRecord {
     estimatedDelivery: string;
     carrier?: string;
     weight?: string;
+    length?: string;
+    width?: string;
+    dimensions?: string;
     origin?: string;
     destination?: string;
   };
@@ -49,6 +52,7 @@ export interface ShipmentRecord {
     showEstimatedDelivery: boolean;
     showCarrier: boolean;
     showWeight: boolean;
+    showDimensions?: boolean;
     showOrigin: boolean;
     showDestination: boolean;
     showSenderName: boolean;
@@ -74,6 +78,9 @@ export interface CustomerShipmentView {
     estimatedDelivery?: string;
     carrier?: string;
     weight?: string;
+    length?: string;
+    width?: string;
+    dimensions?: string;
     origin?: string;
     destination?: string;
   };

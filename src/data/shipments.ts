@@ -83,6 +83,8 @@ export const ADMIN_SHIPMENT_DATABASE: ShipmentRecord[] = [
       estimatedDelivery: 'Sep 18, 2026',
       carrier: 'Primeway Priority Courier',
       weight: '5.8 kg',
+      length: '40 cm',
+      width: '25 cm',
       origin: 'Boston, MA, USA',
       destination: 'Chicago, IL, USA',
     },
@@ -106,6 +108,7 @@ export const ADMIN_SHIPMENT_DATABASE: ShipmentRecord[] = [
       showEstimatedDelivery: true,
       showCarrier: true,
       showWeight: true,
+      showDimensions: true,
       showOrigin: false,
       showDestination: false,
       showSenderName: true,
@@ -310,10 +313,26 @@ export function filterForCustomer(record: ShipmentRecord): CustomerShipmentView 
   if (vis.showTransportation) details.transportationMethod = record.details.transportationMethod;
   if (vis.showDepartureDate) details.departureDate = record.details.departureDate;
   if (vis.showEstimatedDelivery) details.estimatedDelivery = record.details.estimatedDelivery;
-  if (vis.showCarrier) details.carrier = record.details.carrier;
-  if (vis.showWeight) details.weight = record.details.weight;
-  if (vis.showOrigin) details.origin = record.details.origin;
-  if (vis.showDestination) details.destination = record.details.destination;
+  if (vis.showCarrier && record.details.carrier) details.carrier = record.details.carrier;
+  if (vis.showWeight && record.details.weight) details.weight = record.details.weight;
+  
+  const showDims = vis.showDimensions ?? true;
+  if (showDims) {
+    if (record.details.length) details.length = record.details.length;
+    if (record.details.width) details.width = record.details.width;
+    if (record.details.dimensions) {
+      details.dimensions = record.details.dimensions;
+    } else if (record.details.length && record.details.width) {
+      details.dimensions = `${record.details.length} × ${record.details.width}`;
+    } else if (record.details.length) {
+      details.dimensions = `${record.details.length}`;
+    } else if (record.details.width) {
+      details.dimensions = `${record.details.width}`;
+    }
+  }
+
+  if (vis.showOrigin && record.details.origin) details.origin = record.details.origin;
+  if (vis.showDestination && record.details.destination) details.destination = record.details.destination;
 
   const sender: CustomerShipmentView['sender'] = {};
   if (vis.showSenderName) sender.name = record.sender.name;

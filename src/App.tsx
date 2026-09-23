@@ -23,12 +23,22 @@ export default function App() {
   const [systemErrorMessage, setSystemErrorMessage] = useState<string | null>(null);
   const [notFoundDetails, setNotFoundDetails] = useState<string | null>(null);
 
-  // Check URL query param on initial load (e.g. ?code=TRK7A92X4B1)
+  // Ensure the application always loads directly to the Home page on refresh and initial entry
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const codeParam = params.get('code');
-    if (codeParam && codeParam.trim().length === 11) {
-      handleTrack(codeParam.trim());
+    setCurrentTab('home');
+    setSearchState('idle');
+    setShipmentData(null);
+    setSearchedCode('');
+    setSystemErrorMessage(null);
+    setNotFoundDetails(null);
+
+    // Clean up any lingering query parameters (?code=...), hash, or sub-path from previous sessions
+    try {
+      if (typeof window !== 'undefined' && (window.location.search || window.location.hash || window.location.pathname !== '/')) {
+        window.history.replaceState({}, '', '/');
+      }
+    } catch (_e) {
+      // Ignore in sandboxed iframes or environments without history API access
     }
   }, []);
 
@@ -38,15 +48,6 @@ export default function App() {
     setSearchState('loading');
     setSystemErrorMessage(null);
     setNotFoundDetails(null);
-
-    // Update URL quietly without full reload
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.set('code', trimmed);
-      window.history.pushState({}, '', url.toString());
-    } catch (_e) {
-      // Ignore URL pushState errors in sandboxed iframes
-    }
 
     try {
       const result = await lookupShipment(trimmed);

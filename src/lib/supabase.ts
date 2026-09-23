@@ -4,8 +4,17 @@ const DEFAULT_SUPABASE_URL = 'https://xyplbgcjybymntwqkebm.supabase.co';
 const DEFAULT_SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5cGxiZ2NqeWJ5bW50d3FrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3NTgwNjgsImV4cCI6MjEwNTMzNDA2OH0.ofcuh-1u5nzb91nmAHl2F0btPW8sNmdd1aKnq_XdtJY';
 
-const envUrl = (import.meta.env.VITE_SUPABASE_URL || '').replace(/["']/g, '').trim();
-const envKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').replace(/["']/g, '').trim();
+const envUrl = (
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL) ||
+  (typeof process !== 'undefined' && process.env?.VITE_SUPABASE_URL) ||
+  ''
+).replace(/["']/g, '').trim();
+
+const envKey = (
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_ANON_KEY) ||
+  (typeof process !== 'undefined' && process.env?.VITE_SUPABASE_ANON_KEY) ||
+  ''
+).replace(/["']/g, '').trim();
 
 const rawUrl = envUrl || DEFAULT_SUPABASE_URL;
 const rawKey = envKey || DEFAULT_SUPABASE_ANON_KEY;

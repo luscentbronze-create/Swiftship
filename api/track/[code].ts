@@ -39,20 +39,7 @@ export default async function handler(req: any, res: any) {
   try {
     const supabase = createClient(supabaseUrl.trim(), supabaseKey.trim());
 
-    // 1. Try public RPC function
-    const { data: rpcData, error: rpcError } = await supabase.rpc(
-      'get_public_shipment_tracking',
-      { p_tracking_code: normalizedCode }
-    );
-
-    if (!rpcError && rpcData) {
-      return res.status(200).json({
-        success: true,
-        data: rpcData,
-      });
-    }
-
-    // 2. Try direct joined query
+    // 1. Primary lookup: Direct joined query to retrieve shipment details and visibility settings
     const { data: shipment, error: dbError } = await supabase
       .from('shipments')
       .select(`
@@ -86,6 +73,24 @@ export default async function handler(req: any, res: any) {
         ? shipment.tracking_events
         : [];
 
+      const showWeight = visibility.show_weight ?? true;
+      const showDimensions = visibility.show_dimensions ?? true;
+
+      const rawWeight = details.weight ? String(details.weight).trim() : undefined;
+      const rawLength = details.length ? String(details.length).trim() : undefined;
+      const rawWidth = details.width ? String(details.width).trim() : undefined;
+
+      let dimensions: string | undefined = undefined;
+      if (showDimensions) {
+        if (rawLength && rawWidth) {
+          dimensions = `${rawLength} × ${rawWidth}`;
+        } else if (rawLength) {
+          dimensions = rawLength;
+        } else if (rawWidth) {
+          dimensions = rawWidth;
+        }
+      }
+
       return res.status(200).json({
         success: true,
         data: {
@@ -110,26 +115,42 @@ export default async function handler(req: any, res: any) {
             hasHiddenFields: !visibility.show_receiver_address || !visibility.show_receiver_phone,
           },
           details: {
-            product: details.product || 'Standard Package',
-            quantity: details.quantity || 1,
-            weight: details.weight ? `${details.weight} kg` : undefined,
-            transportationMethod: details.transportation_method || 'Ground',
-            carrier: details.carrier || 'Swiftship Express',
-            departureDate: details.departure_date,
-            estimatedDelivery: details.estimated_delivery,
-            origin: details.origin,
-            destination: details.destination,
+            product: visibility.show_product !== false ? (details.product || 'Standard Package') : undefined,
+            quantity: visibility.show_quantity !== false ? (details.quantity || 1) : undefined,
+            weight: showWeight && rawWeight ? rawWeight : undefined,
+            length: showDimensions && rawLength ? rawLength : undefined,
+            width: showDimensions && rawWidth ? rawWidth : undefined,
+            dimensions: dimensions,
+            transportationMethod: visibility.show_transportation !== false ? (details.transportation_method || 'Ground') : undefined,
+            carrier: visibility.show_carrier !== false ? (details.carrier || 'Primeway Express') : undefined,
+            departureDate: visibility.show_departure_date !== false ? details.departure_date : undefined,
+            estimatedDelivery: visibility.show_estimated_delivery !== false ? details.estimated_delivery : undefined,
+            origin: visibility.show_origin ? details.origin : undefined,
+            destination: visibility.show_destination ? details.destination : undefined,
             packageType: details.package_type,
             notes: details.notes,
           },
           history: events.map((ev: any) => ({
-            date: ev.event_date,
-            time: ev.event_time,
+            date: ev.date || ev.event_date,
+            time: ev.time || ev.event_time,
             status: ev.status,
             location: ev.location,
             description: ev.description,
           })),
         },
+      });
+    }
+
+    // 2. Fallback: Try public RPC function
+    const { data: rpcData, error: rpcError } = await supabase.rpc(
+      'get_public_shipment_tracking',
+      { p_tracking_code: normalizedCode }
+    );
+
+    if (!rpcError && rpcData) {
+      return res.status(200).json({
+        success: true,
+        data: rpcData,
       });
     }
 

@@ -100,20 +100,7 @@ export async function lookupShipmentFromSupabase(
   const normalizedCode = trackingCode.trim().toUpperCase();
 
   try {
-    // 1. First attempt: call the RPC function get_public_shipment_tracking if available
-    const { data: rpcData, error: rpcError } = await client.rpc(
-      'get_public_shipment_tracking',
-      { p_tracking_code: normalizedCode }
-    );
-
-    if (!rpcError && rpcData) {
-      return {
-        success: true,
-        data: rpcData as CustomerShipmentView,
-      };
-    }
-
-    // 2. Second attempt: Direct table queries via join/relations
+    // 1. Primary lookup: Direct joined query to retrieve all relational tables including shipment_details and shipment_visibilities
     let shipment: any = null;
     const { data: joinedShipment, error: shipmentError } = await client
       .from('shipments')
@@ -135,7 +122,49 @@ export async function lookupShipmentFromSupabase(
       shipment = joinedShipment;
     } else {
       if (shipmentError) {
-        console.warn('[Supabase] Joined query failed, attempting standalone table lookup:', shipmentError.message);
+        console.warn('[Supabase] Joined query failed, attempting RPC or standalone table lookup:', shipmentError.message);
+      }
+
+      // 2. Secondary fallback: RPC get_public_shipment_tracking
+      const { data: rpcData, error: rpcError } = await client.rpc(
+        'get_public_shipment_tracking',
+        { p_tracking_code: normalizedCode }
+      );
+
+      if (!rpcError && rpcData) {
+        // Also attempt to fetch length, width, weight from shipment_details if missing
+        try {
+          const { data: baseS } = await client.from('shipments').select('id').ilike('tracking_code', normalizedCode).maybeSingle();
+          if (baseS) {
+            const { data: dRow } = await client.from('shipment_details').select('weight, length, width').eq('shipment_id', baseS.id).maybeSingle();
+            const { data: vRow } = await client.from('shipment_visibilities').select('show_weight, show_dimensions').eq('shipment_id', baseS.id).maybeSingle();
+            const res = rpcData as CustomerShipmentView;
+            if (!res.details) res.details = {};
+            const showW = vRow?.show_weight ?? true;
+            const showD = vRow?.show_dimensions ?? true;
+            if (showW && dRow?.weight && !res.details.weight) {
+              res.details.weight = String(dRow.weight).trim();
+            }
+            if (showD) {
+              if (dRow?.length) res.details.length = String(dRow.length).trim();
+              if (dRow?.width) res.details.width = String(dRow.width).trim();
+              if (dRow?.length && dRow?.width) {
+                res.details.dimensions = `${String(dRow.length).trim()} × ${String(dRow.width).trim()}`;
+              } else if (dRow?.length) {
+                res.details.dimensions = String(dRow.length).trim();
+              } else if (dRow?.width) {
+                res.details.dimensions = String(dRow.width).trim();
+              }
+            }
+          }
+        } catch (_enrichErr) {
+          // ignore enrichment error
+        }
+
+        return {
+          success: true,
+          data: rpcData as CustomerShipmentView,
+        };
       }
 
       // 3. Third attempt: Resilient standalone queries (in case foreign key relationships aren't cached or sub-tables are flat)
@@ -249,7 +278,9 @@ export async function lookupShipmentFromSupabase(
         departureDate: details.departure_date || shipment.departure_date || '',
         estimatedDelivery: details.estimated_delivery || shipment.estimated_delivery || '',
         carrier: details.carrier || shipment.carrier || 'Primeway Express',
-        weight: details.weight || shipment.weight || '1.0 kg',
+        weight: details.weight ? String(details.weight).trim() : (shipment.weight ? String(shipment.weight).trim() : undefined),
+        length: details.length ? String(details.length).trim() : (shipment.length ? String(shipment.length).trim() : undefined),
+        width: details.width ? String(details.width).trim() : (shipment.width ? String(shipment.width).trim() : undefined),
         origin: details.origin || shipment.origin || '',
         destination: details.destination || shipment.destination || '',
       },
@@ -273,6 +304,7 @@ export async function lookupShipmentFromSupabase(
         showEstimatedDelivery: vis.show_estimated_delivery ?? true,
         showCarrier: vis.show_carrier ?? true,
         showWeight: vis.show_weight ?? true,
+        showDimensions: vis.show_dimensions ?? true,
         showOrigin: vis.show_origin ?? true,
         showDestination: vis.show_destination ?? true,
         showSenderName: vis.show_sender_name ?? true,

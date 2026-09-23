@@ -53,6 +53,48 @@ export const TrackingResultView: React.FC<TrackingResultViewProps> = ({
     }
   };
 
+  // Safely format package weight without placeholder dashes or null rendering
+  const formattedWeight = (() => {
+    const raw = shipment?.details?.weight;
+    if (raw === undefined || raw === null) return null;
+    const str = String(raw).trim();
+    if (!str || str.toLowerCase() === 'null' || str === '-' || str === 'undefined') return null;
+    if (/^\d+(\.\d+)?$/.test(str)) {
+      return `${str} kg`;
+    }
+    return str;
+  })();
+
+  // Safely format dimensions (L × W) without placeholder dashes or null rendering
+  const formattedDimensions = (() => {
+    const dims = shipment?.details?.dimensions;
+    if (dims && typeof dims === 'string') {
+      const clean = dims.trim();
+      if (clean && clean.toLowerCase() !== 'null' && clean !== '-' && clean !== 'undefined') {
+        return clean;
+      }
+    }
+
+    const rawL = shipment?.details?.length;
+    const rawW = shipment?.details?.width;
+    const l = rawL !== undefined && rawL !== null ? String(rawL).trim() : '';
+    const w = rawW !== undefined && rawW !== null ? String(rawW).trim() : '';
+
+    const validL = l && l.toLowerCase() !== 'null' && l !== '-' && l !== 'undefined' ? l : null;
+    const validW = w && w.toLowerCase() !== 'null' && w !== '-' && w !== 'undefined' ? w : null;
+
+    if (validL && validW) {
+      return `${validL} × ${validW}`;
+    }
+    if (validL) {
+      return validL;
+    }
+    if (validW) {
+      return validW;
+    }
+    return null;
+  })();
+
   return (
     <div className="w-full bg-[#0E1116] py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-6">
@@ -170,11 +212,31 @@ export const TrackingResultView: React.FC<TrackingResultViewProps> = ({
             id="shipment-details-card"
             className="bg-[#151921] border border-[#1E232F] rounded-2xl p-6 shadow-xl space-y-4"
           >
-            <div className="flex items-center justify-between border-b border-[#1E232F] pb-3">
+            <div className="flex items-center justify-between border-b border-[#1E232F] pb-3 flex-wrap gap-2">
               <h4 className="text-sm font-bold text-white flex items-center gap-2">
                 <Package className="w-4 h-4 text-[#FFE600]" />
                 <span>Shipment Details</span>
               </h4>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {formattedWeight && (
+                  <span
+                    id="tag-package-weight"
+                    className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-[#1E232F] text-amber-300 border border-amber-400/20"
+                    title="Package Weight"
+                  >
+                    {formattedWeight}
+                  </span>
+                )}
+                {formattedDimensions && (
+                  <span
+                    id="tag-dimensions"
+                    className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-[#1E232F] text-sky-300 border border-sky-400/20"
+                    title="Dimensions (L × W)"
+                  >
+                    {formattedDimensions}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="space-y-3 text-xs">
@@ -199,6 +261,18 @@ export const TrackingResultView: React.FC<TrackingResultViewProps> = ({
                   </span>
                 </div>
               )}
+              {formattedWeight && (
+                <div id="row-package-weight" className="flex justify-between items-center py-1 border-b border-[#1E232F]/60">
+                  <span className="text-slate-400">Package Weight</span>
+                  <span className="font-semibold text-white font-mono">{formattedWeight}</span>
+                </div>
+              )}
+              {formattedDimensions && (
+                <div id="row-dimensions" className="flex justify-between items-center py-1 border-b border-[#1E232F]/60">
+                  <span className="text-slate-400">Dimensions (L × W)</span>
+                  <span className="font-semibold text-white font-mono">{formattedDimensions}</span>
+                </div>
+              )}
               {shipment.details.departureDate && (
                 <div className="flex justify-between items-center py-1 border-b border-[#1E232F]/60">
                   <span className="text-slate-400">Departure Date</span>
@@ -209,12 +283,6 @@ export const TrackingResultView: React.FC<TrackingResultViewProps> = ({
                 <div className="flex justify-between items-center py-1">
                   <span className="text-slate-400">Estimated Delivery</span>
                   <span className="font-bold text-[#FFE600] font-mono">{shipment.details.estimatedDelivery}</span>
-                </div>
-              )}
-              {shipment.details.weight && (
-                <div className="flex justify-between items-center py-1 border-t border-[#1E232F]/60">
-                  <span className="text-slate-400">Weight</span>
-                  <span className="font-semibold text-slate-300">{shipment.details.weight}</span>
                 </div>
               )}
             </div>

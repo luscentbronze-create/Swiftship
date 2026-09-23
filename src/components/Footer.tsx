@@ -8,7 +8,7 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const contactPhone = '+1 (878) 216-9518';
-  const contactEmail = 'support@primewayexpress.com';
+  const contactEmail = 'support@primewayexpress.org';
   const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(contactEmail)}`;
 
   return (
